@@ -86,7 +86,7 @@ const signIn = async (req, res) => {
     if(!passwordCheck) return res.status(400).send({status:false,message:"incorrect password"});
 
     let payload = {email:email,userId:emailCheck[0].id};
-    let token = jwt.sign(payload,"ideaclan");
+    let token = jwt.sign(payload,process.env.JWT_SECRET);
     res.setHeader("x-api-key",token);
 
     return res.status(200).send({status:true,message:"logged in successfully", data:{token:token,name:emailCheck[0].name, profile:emailCheck[0].profile}});

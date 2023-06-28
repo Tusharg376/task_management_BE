@@ -4,7 +4,7 @@ const authentication = async (req,res,next)=>{
     let token = req.headers['x-api-key'];
     if(!token) return res.status(400).send({status:false,message:"Login to continue"});
 
-    jwt.verify(token,"ideaclan",(err,decode)=>{
+    jwt.verify(token,process.env.JWT_SECRET,(err,decode)=>{
         if(err) return res.status(401).send({status:false,message:"Login again to continue"});
         else{
             req.decode = decode;
