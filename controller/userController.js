@@ -33,7 +33,7 @@ const createUser = async (req, res) => {
 
     if(password) password = password.trim();
     if (!password) return res.status(400).send({ status: false, message: "please provide Password" });
-    else if (!isValidPassword(password)) return res.status(400).send({ status: false, message: "password must be of min 8 characters with lower and upper case alphabets" });
+    else if (!isValidPassword(password)) return res.status(400).send({ status: false, message: "password must contain min 8 characters with lower and upper case alphabets and one special character" });
 
     const hashedPass = await bcrypt.hash(password, 10);
     password = hashedPass;
@@ -43,6 +43,8 @@ const createUser = async (req, res) => {
       const snapshot = await uploadBytes(imageRef, files.buffer);
       const url = await getDownloadURL(snapshot.ref);
       profile = url.toString();
+    }else{
+      profile = "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg?20200418092106";
     }
 
     const setData = `INSERT INTO  user(name,email,password,profile) VALUES("${name}","${email}","${password}","${profile}")`;
@@ -53,7 +55,7 @@ const createUser = async (req, res) => {
       })
     })
       .catch((err) => res.status(500).send({ status: false, message: err.message }))
-    return res.status(201).send({ status: true, message: "User created successfully" });
+    return res.status(201).send({ status: true, message: "User registered successfully" });
     
   } catch (error) {
     return res.status(500).send({ status: false, message: error.message });
@@ -65,7 +67,7 @@ const signIn = async (req, res) => {
     let { email, password } = req.body;
 
     if(email) email = email.trim();
-    if (!email) return res.status(400).send({ status: true, message: "please provide Email" });
+    if (!email) return res.status(400).send({ status: false, message: "please provide Email" });
 
     if(password) password = password.trim();
     if (!password) return res.status(400).send({ status: false, message: "please provide password" });

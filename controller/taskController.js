@@ -25,7 +25,7 @@ const createTask = async (req, res) => {
 const getAllTasks = async (req, res) => {
     try {
         const userId = req.decode.userId;
-        const getQuery = `SELECT task_id,title,description FROM task WHERE is_deleted = 'false' AND user_id = ${userId}`;
+        const getQuery = `SELECT task_id,title,description FROM task WHERE is_deleted = 'false' AND user_id = ${userId} ORDER BY created_at DESC`;
         const data = await new Promise((resolve, reject) => {
             req.db.query(getQuery, (err, data) => {
                 if (err) reject(err);
@@ -70,8 +70,8 @@ const deleteTask = async (req,res)=>{
                 if(data) resolve(data)
             })
         }).catch((err) => res.status(500).send({ status: false, message: err.message }));
-
-        if(data.affectedRows>0) return res.status(200).status({status:true,message:"task deleted successfully"});
+    
+        if(data.affectedRows>0) return res.status(200).send({status:true,message:"task deleted successfully"});
 
     }catch(error){
         return res.status(500).send({status:false,message:error.message});
